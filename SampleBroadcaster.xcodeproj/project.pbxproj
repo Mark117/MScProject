@@ -27,6 +27,8 @@
 		7265D66B1919978E0042DC3B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7265D66A1919978E0042DC3B /* CoreMedia.framework */; };
 		7265D66D191997930042DC3B /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7265D66C191997930042DC3B /* CoreVideo.framework */; };
 		7265D66F191997970042DC3B /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7265D66E191997970042DC3B /* OpenGLES.framework */; };
+		9BE5033A19AE619A00F6D50D /* VenueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE5033919AE619A00F6D50D /* VenueViewController.m */; };
+		9BE5033D19AE6A8900F6D50D /* StreamerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE5033C19AE6A8900F6D50D /* StreamerView.m */; };
 		F40EFF3C19A21BEA00F2E100 /* MainTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F40EFF3719A21BEA00F2E100 /* MainTableViewController.m */; };
 		F40EFF3D19A21BEA00F2E100 /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F40EFF3919A21BEA00F2E100 /* MapViewController.m */; };
 		F40EFF3E19A21BEA00F2E100 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F40EFF3B19A21BEA00F2E100 /* SettingsViewController.m */; };
@@ -79,6 +81,10 @@
 		7265D66C191997930042DC3B /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		7265D66E191997970042DC3B /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		89C13C05AD1E4151BD6AB5C7 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
+		9BE5033819AE619A00F6D50D /* VenueViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VenueViewController.h; sourceTree = "<group>"; };
+		9BE5033919AE619A00F6D50D /* VenueViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VenueViewController.m; sourceTree = "<group>"; };
+		9BE5033B19AE6A8900F6D50D /* StreamerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamerView.h; sourceTree = "<group>"; };
+		9BE5033C19AE6A8900F6D50D /* StreamerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamerView.m; sourceTree = "<group>"; };
 		D811EF3F24704EBFB916513B /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F40EFF3619A21BEA00F2E100 /* MainTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainTableViewController.h; path = ../MainTableViewController.h; sourceTree = "<group>"; };
 		F40EFF3719A21BEA00F2E100 /* MainTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainTableViewController.m; path = ../MainTableViewController.m; sourceTree = "<group>"; };
@@ -212,6 +218,8 @@
 		7265D5E5191994B80042DC3B /* SampleBroadcaster */ = {
 			isa = PBXGroup;
 			children = (
+				9BE5033819AE619A00F6D50D /* VenueViewController.h */,
+				9BE5033919AE619A00F6D50D /* VenueViewController.m */,
 				F435DB9A19ADFCD3008BCF43 /* iPad */,
 				7265D5EE191994B80042DC3B /* AppDelegate.h */,
 				7265D5EF191994B80042DC3B /* AppDelegate.m */,
@@ -233,6 +241,8 @@
 				F40EFF8519A220B000F2E100 /* WatchTableViewCell.m */,
 				7265D5FA191994B80042DC3B /* Images.xcassets */,
 				7265D5E6191994B80042DC3B /* Supporting Files */,
+				9BE5033B19AE6A8900F6D50D /* StreamerView.h */,
+				9BE5033C19AE6A8900F6D50D /* StreamerView.m */,
 			);
 			path = SampleBroadcaster;
 			sourceTree = "<group>";
@@ -434,6 +444,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9BE5033A19AE619A00F6D50D /* VenueViewController.m in Sources */,
 				F40EFF8119A21FBC00F2E100 /* SBJsonBase.m in Sources */,
 				F40EFF8219A21FBC00F2E100 /* SBJsonParser.m in Sources */,
 				F40EFF8319A21FBC00F2E100 /* SBJsonWriter.m in Sources */,
@@ -442,6 +453,7 @@
 				7265D5F9191994B80042DC3B /* ViewController.mm in Sources */,
 				F40EFF3D19A21BEA00F2E100 /* MapViewController.m in Sources */,
 				F40EFF3E19A21BEA00F2E100 /* SettingsViewController.m in Sources */,
+				9BE5033D19AE6A8900F6D50D /* StreamerView.m in Sources */,
 				7265D5F0191994B80042DC3B /* AppDelegate.m in Sources */,
 				F433C06219ACC31300E2A298 /* streamDetailsViewController.m in Sources */,
 				F4461F6019A4DED500274970 /* StreamViewController.m in Sources */,

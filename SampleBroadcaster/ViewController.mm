@@ -342,4 +342,8 @@
 - (IBAction)btnToMap:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
 }
+
+- (IBAction)btnToVenue:(id)sender {
+    [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"venue"] animated:YES];
+}
 @end

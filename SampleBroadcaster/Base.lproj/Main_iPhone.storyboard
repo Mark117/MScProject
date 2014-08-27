@@ -86,6 +86,16 @@
                                     <segue destination="tpr-2J-5u4" kind="push" id="35g-dT-KpG"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Vk-NE-eEi">
+                                <rect key="frame" x="71" y="498" width="50" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="venue">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="btnToVenue:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="Cw1-Nd-taJ"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -204,6 +214,36 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="h27-gI-fKI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1352" y="133"/>
+        </scene>
+        <!--Venue View Controller-->
+        <scene sceneID="zBX-G9-ksF">
+            <objects>
+                <viewController storyboardIdentifier="venue" useStoryboardIdentifierAsRestorationIdentifier="YES" id="J77-c9-sEZ" customClass="VenueViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="jff-Kd-1Qh"/>
+                        <viewControllerLayoutGuide type="bottom" id="iVR-dX-mbc"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="cye-4m-50i">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lGl-Zw-VEp">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <connections>
+                                    <outlet property="delegate" destination="J77-c9-sEZ" id="RfS-2d-d7u"/>
+                                </connections>
+                            </scrollView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <outlet property="scrollView" destination="lGl-Zw-VEp" id="ura-0j-wcn"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ezg-v0-Fdb" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1742" y="143"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="jR0-Uh-TdH">
@@ -514,6 +554,7 @@
         <image name="settings icon" width="512" height="512"/>
         <image name="streamicon" width="256" height="256"/>
         <image name="upvote" width="93" height="109"/>
+        <image name="venue" width="128" height="128"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

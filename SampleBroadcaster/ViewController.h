@@ -53,5 +53,5 @@
 @property (retain, nonatomic) IBOutlet UIButton *swapFront;
 @property (retain, nonatomic) IBOutlet UIButton *swapBack;
 - (IBAction)btnToMap:(id)sender;
-
+- (IBAction)btnToVenue:(id)sender;
 @end

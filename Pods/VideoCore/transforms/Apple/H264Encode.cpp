@@ -21,6 +21,7 @@
  */
 #include <Availability.h>
 #include <TargetConditionals.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 #if TARGET_OS_IPHONE
 #if defined(__IPHONE_8_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0
@@ -116,8 +117,10 @@ namespace videocore { namespace Apple {
             
             CMTime pts = CMTimeMake(metadata.timestampDelta, 1000.); // timestamp is in ms.
             CMTime dur = CMTimeMake(1, m_fps);
+            VTEncodeInfoFlags flags;
             
-            VTCompressionSessionEncodeFrame(session, (CVPixelBufferRef)data, pts, dur, NULL, NULL, NULL);
+            VTCompressionSessionEncodeFrame(session, (CVPixelBufferRef)data, pts, dur, NULL, NULL, &flags);
+            
         }
 #endif
     }
@@ -228,6 +231,20 @@ namespace videocore { namespace Apple {
         }
 #endif
 
+    }
+    
+    void
+    H264Encode::setBitrate(int bitrate)
+    {
+#if VERSION_OK
+        m_bitrate = bitrate;
+        if(m_compressionSession) {
+            const int v = m_bitrate;
+            CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
+            VTSessionSetProperty((VTCompressionSessionRef)m_compressionSession, kVTCompressionPropertyKey_AverageBitRate, ref);
+            CFRelease(ref);
+        }
+#endif
     }
 }
 }

@@ -26,7 +26,37 @@
 #include <sstream>
 
 namespace videocore { namespace iOS {
- 
+    
+    Boolean IsAACHardwareEncoderAvailable(void)
+    {
+        Boolean isAvailable = false;
+        OSStatus error;
+        
+        // get an array of AudioClassDescriptions for all installed encoders for the given format
+        // the specifier is the format that we are interested in - this is 'aac ' in our case
+        UInt32 encoderSpecifier = kAudioFormatMPEG4AAC;
+        UInt32 size;
+        
+        error = AudioFormatGetPropertyInfo(kAudioFormatProperty_Encoders, sizeof(encoderSpecifier),
+                                           &encoderSpecifier, &size);
+        if (error) { printf("AudioFormatGetPropertyInfo kAudioFormatProperty_Encoders error %d %4.4s\n", (int)error, (char*)&error); return false; }
+        
+        UInt32 numEncoders = size / sizeof(AudioClassDescription);
+        AudioClassDescription encoderDescriptions[numEncoders];
+        
+        error = AudioFormatGetProperty(kAudioFormatProperty_Encoders, sizeof(encoderSpecifier),
+                                       &encoderSpecifier, &size, encoderDescriptions);
+        if (error) { printf("AudioFormatGetProperty kAudioFormatProperty_Encoders error %d %4.4s\n",
+                            (int)error, (char*)&error); return false; }
+        
+        for (UInt32 i=0; i < numEncoders; ++i) {
+            if (encoderDescriptions[i].mSubType == kAudioFormatMPEG4AAC &&
+                encoderDescriptions[i].mManufacturer == kAppleHardwareAudioCodecManufacturer) isAvailable = true;
+        }
+        
+        return isAvailable;
+    }
+    
     struct UserData {
         uint8_t* data;
         int size;
@@ -37,16 +67,38 @@ namespace videocore { namespace iOS {
     
     static const int kSamplesPerFrame = 1024;
     
-    AACEncode::AACEncode( int frequencyInHz, int channelCount )
+    static char *FormatError(char *str, OSStatus error)
+    {
+        // see if it appears to be a 4-char-code
+        *(UInt32 *)(str + 1) = CFSwapInt32HostToBig(error);
+        if (isprint(str[1]) && isprint(str[2]) && isprint(str[3]) && isprint(str[4])) {
+            str[0] = str[5] = '\'';
+            str[6] = '\0';
+        } else
+            // no, format it as an integer
+            sprintf(str, "%d", (int)error);
+        return str;
+    }
+    
+    AACEncode::AACEncode(int frequencyInHz, int channelCount)
     : m_sentConfig(false)
     {
-
+        
+        OSStatus result = 0;
+        char err[5];
+        
         AudioStreamBasicDescription in = {0}, out = {0};
         
+        
+        // passing anything except 48000, 44100, and 22050 for mSampleRate results in "!dat"
+        // OSStatus when querying for kAudioConverterPropertyMaximumOutputPacketSize property
+        // below
         in.mSampleRate = frequencyInHz;
+        // passing anything except 2 for mChannelsPerFrame results in "!dat" OSStatus when
+        // querying for kAudioConverterPropertyMaximumOutputPacketSize property below
         in.mChannelsPerFrame = channelCount;
         in.mBitsPerChannel = 16;
-        in.mFormatFlags = kAudioFormatFlagsCanonical;
+        in.mFormatFlags =  kAudioFormatFlagIsSignedInteger | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked;
         in.mFormatID = kAudioFormatLinearPCM;
         in.mFramesPerPacket = 1;
         in.mBytesPerFrame = in.mBitsPerChannel * in.mChannelsPerFrame / 8;
@@ -63,28 +115,64 @@ namespace videocore { namespace iOS {
         UInt32 propSize = sizeof(outputBitrate);
         UInt32 outputPacketSize = 0;
         
-        AudioClassDescription requestedCodecs[1] = {
+        bool hardwareAvailable = IsAACHardwareEncoderAvailable();
+        
+
+        AudioClassDescription requestedCodecs[2] = {
             {
                 kAudioEncoderComponentType,
                 kAudioFormatMPEG4AAC,
                 kAppleSoftwareAudioCodecManufacturer
+            },
+            {
+                kAudioEncoderComponentType,
+                kAudioFormatMPEG4AAC,
+                kAppleHardwareAudioCodecManufacturer
             }
         };
         
-        AudioConverterNewSpecific(&in, &out, 1, requestedCodecs, &m_audioConverter);
+        //if(!hardwareAvailable) {
+        //    requestedCodecs[0].mManufacturer = kAppleSoftwareAudioCodecManufacturer;
+        //}
         
-        AudioConverterSetProperty(m_audioConverter, kAudioConverterEncodeBitRate, propSize, &outputBitrate);
+        result = AudioConverterNewSpecific(&in, &out, 2, requestedCodecs, &m_audioConverter);
+        if (result) FormatError(err, result);
         
-        AudioConverterSetProperty(m_audioConverter, kAudioConverterPropertyCanResumeFromInterruption, sizeof(canResume), &canResume);
+        result = AudioConverterSetProperty(m_audioConverter, kAudioConverterEncodeBitRate, propSize, &outputBitrate);
+        if (result) FormatError(err, result);
         
-        AudioConverterGetProperty(m_audioConverter, kAudioConverterPropertyMaximumOutputPacketSize, &propSize, &outputPacketSize);
+        result = AudioConverterSetProperty(m_audioConverter, kAudioConverterPropertyCanResumeFromInterruption, sizeof(canResume), &canResume);
+        if (result) FormatError(err, result);
+        
+        result = AudioConverterGetProperty(m_audioConverter, kAudioConverterPropertyMaximumOutputPacketSize, &propSize, &outputPacketSize);
+        if (result) FormatError(err, result);
         
         
         m_outputPacketMaxSize = outputPacketSize;
         
         m_bytesPerSample = 2 * channelCount;
         
-        makeAsc((frequencyInHz == 44100) ? 4 : 3, channelCount);
+        int sampleRateIndex;
+        switch(frequencyInHz) {
+            case 48000:
+                sampleRateIndex = 3;
+                break;
+            case 44100:
+                sampleRateIndex = 4;
+                break;
+            case 22050:
+                sampleRateIndex = 7;
+                break;
+            case 11025:
+                sampleRateIndex = 10;
+                break;
+            case 8000:
+                sampleRateIndex = 11;
+                break;
+            default:
+                sampleRateIndex = 15;
+        }
+        makeAsc(sampleRateIndex, channelCount);
         
     }
     AACEncode::~AACEncode() {
@@ -124,10 +212,10 @@ namespace videocore { namespace iOS {
         }
         uint8_t* p = m_outputBuffer();
         uint8_t* p_out = (uint8_t*)data;
-
+        
         for ( size_t i = 0 ; i < aac_packet_count ; ++i ) {
             UInt32 num_packets = 1;
-
+            
             AudioBufferList l;
             l.mNumberBuffers=1;
             l.mBuffers[0].mDataByteSize = m_outputPacketMaxSize * num_packets;
@@ -146,7 +234,7 @@ namespace videocore { namespace iOS {
             p_out += kSamplesPerFrame * m_bytesPerSample;
         }
         const size_t totalBytes = p - m_outputBuffer();
-
+        
         
         auto output = m_output.lock();
         if(output && totalBytes) {

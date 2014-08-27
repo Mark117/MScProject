@@ -76,6 +76,7 @@ namespace videocore { namespace iOS {
             
             BOOL autoLvlOK = &AVVideoProfileLevelH264MainAutoLevel != NULL;
             
+            
             NSDictionary* settings = @{AVVideoCodecKey: AVVideoCodecH264,
                                        AVVideoCompressionPropertiesKey: @{AVVideoAverageBitRateKey: @(m_bitrate),
                                                                           AVVideoMaxKeyFrameIntervalKey: @(m_fps*2),
@@ -365,6 +366,15 @@ namespace videocore { namespace iOS {
             
         }
         
+    }
+    
+    void
+    H264Encode::setBitrate(int bitrate)
+    {
+        m_bitrate = bitrate;
+        teardownWriter(!m_currentWriter);
+        setupWriter(!m_currentWriter);
+        swapWriters(true);
     }
 }
 }
